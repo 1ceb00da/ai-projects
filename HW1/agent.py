@@ -51,121 +51,72 @@ def read_input():
 
     return [task, source, dest, num_nodes, nodes, cost_matrix]
 
-def expand(graph, node):
-    frontier = []
-    for each in graph[node]:
-        if graph[node][each]:
-            frontier.append(each)
-    frontier.sort()
-    return frontier
-
-def bfs(graph, source, dest):
-    # Initialisation
-    Q = Queue()
-    explored = {}
-    for each in graph:
-        explored[each] = False
-    
-    explored[source] = True
-    Q.put(source)
-    
-    while True:
-        if Q.empty():
-            return 'BFS Failed!'
-        node = Q.get()
-        if node == dest:
-            return 'BFS success!'
-        frontier = expand(graph, node)
-        for each in frontier:
-            if not explored[each]:
-                explored[each] = True
-                Q.put(each)
-    
-import pdb
-
 class Node:
-    count = -1
-    
-    def reset():
-        count = -1
 
     def __init__(self, state):
-        self.__class__.count = self.count + 1
-        self.num = self.count
         self.state = state
         self.parent = None
         self.path_cost = 0
         self.depth = 0
-        self.is_explored = False
 
     def __repr__(self):
-        return repr((self.num, self.state, self.parent, self.path_cost, self.depth, self.is_explored))
+        return repr((self.state, self.parent, self.path_cost, self.depth))
     
     def __str__(self):
         s = "Node("
-        s += "num = " + str(self.num) + ", "
         s += "state = '" + str(self.state) + "', "
         s += "parent = " + str(self.parent) + ", "
         s += "path_cost = " + str(self.path_cost) + ", "
         s += "depth = " + str(self.depth) + ", "
-        s += "is_explored = " + str(self.is_explored)
         s += ")"
         return s
 
-def _expand(graph, node):
+def expand(graph, node, explored):
     frontier = []
-    for each_successor in graph[node.state]:
-        if graph[node.state][each_successor]:
-            successor = Node(each_successor)
-            successor.parent = node.num
-            successor.path_cost = successor.path_cost + graph[node.state][each_successor]
-            successor.depth += 1
-            frontier.append(successor)
-    # frontier.sort()
+    for each_child in graph[node.state]:
+        if graph[node.state][each_child]:
+            child = Node(each_child)
+            child.parent = node
+            child.path_cost = child.parent.path_cost + graph[node.state][each_child]
+            child.depth = child.parent.depth + 1
+            # TODO: Check for repeated states.
+            # Refer slides 'session02-04', slide 106, 112
+            # Slide 12 has 'Clean Robust Algorithm'
+            # if not explored[each_child]:
+
+            if not explored[child.state]:
+                frontier.append(child)
+
     frontier = sorted(frontier, key=lambda node: node.state)
     return frontier
 
-def _bfs(graph, source, dest):
-    # Initialisation
-##    Q = Queue()
-##    explored = {}
-##    for each in graph:
-##        explored[each] = False
-##    
-##    explored[source] = True
-##    Q.put(source)
-
+def bfs(graph, source, dest):
+    # Initialisation    
     s = Node(source)
-    s.is_explored = True
     Q = Queue()
-    steps = []
-    steps.append(s)
     Q.put(s)
-    
+    explored = {}
+    for each in graph:
+        explored[each] = False
+    explored[s.state] = True
+    expansion = []
+
+    # Main Loop
     while True:
         if Q.empty():
             return 'BFS Failed!'
         node = Q.get()
+        expansion.append(node.state)
         if node.state == dest:
-            return [node, steps]
-        frontier = expand(graph, node)
+            return [node, expansion]
+        frontier = expand(graph, node, explored)
         for each_node in frontier:
-           # pdb.set_trace()
-            if not each_node.is_explored:
-                each_node.is_explored = True
-                Q.put(each_node)
-                steps.append(each_node)
-    
+            Q.put(each_node)
+            explored[each_node] = True
 
-graph1 = {'Daniel': {'Daniel': 0, 'Elaine': 1, 'Claire': 0, 'Bill': 0, 'Andy': 1}, 'Elaine': {'Daniel': 1, 'Elaine': 0, 'Claire': 1, 'Bill': 1, 'Andy': 0}, 'Claire': {'Daniel': 0, 'Elaine': 1, 'Claire': 0, 'Bill': 0, 'Andy': 1}, 'Bill': {'Daniel': 0, 'Elaine': 1, 'Claire': 0, 'Bill': 0, 'Andy': 1}, 'Andy': {'Daniel': 1, 'Elaine': 0, 'Claire': 1, 'Bill': 1, 'Andy': 0}}
-graph2 = {'Zoe': {'Zoe': 0, 'Bill': 1, 'Claire': 2, 'Daniel': 2, 'Elaine': 2, 'Andy': 0}, 'Bill': {'Zoe': 1, 'Bill': 0, 'Claire': 0, 'Daniel': 0, 'Elaine': 3, 'Andy': 4}, 'Claire': {'Zoe': 2, 'Bill': 0, 'Claire': 0, 'Daniel': 0, 'Elaine': 4, 'Andy': 3}, 'Daniel': {'Zoe': 2, 'Bill': 0, 'Claire': 0, 'Daniel': 0, 'Elaine': 2, 'Andy': 2}, 'Elaine': {'Zoe': 2, 'Bill': 3,'Claire': 4, 'Daniel': 2, 'Elaine': 0, 'Andy': 0}, 'Andy': {'Zoe': 0, 'Bill': 4, 'Claire': 3, 'Daniel': 2, 'Elaine': 0, 'Andy': 0}}
-vertices = ['Andy', 'Bill', 'Claire', 'Daniel', 'Elaine']
-
-[node, steps] = bfs(graph1, 'Andy', 'Elaine')
-print node
-print steps
 input = [task, source, dest, num_nodes, vertices, cost_matrix] = read_input()
 graph = create_graph(vertices, cost_matrix)
 
-print bfs(graph, source, dest)
-print graph
+[result, expansion] = bfs(graph, source, dest)
+print expansion
+print result
