@@ -1,11 +1,46 @@
 #! /usr/bin/python2.6
 # AI Homework 1
+from Queue import Queue
 from collections import deque
 
 import heapq
 import pdb
 
 global_nodes = []
+
+##class PriorityQueue:
+##    """
+##      Implements a priority queue data structure. Each inserted item
+##      has a priority associated with it and the client is usually interested
+##      in quick retrieval of the lowest-priority item in the queue. This
+##      data structure allows O(1) access to the lowest-priority item.
+##
+##      Note that this PriorityQueue does not allow you to change the priority
+##      of an item.  However, you may insert the same item multiple times with
+##      different priorities.
+##    """
+##    def  __init__(self):
+##        self.heap = []
+##        self.count = 0
+##
+##    def __str__(self):
+##        return self.heap
+##
+##    def push(self, item, priority):
+##        # FIXME: restored old behaviour to check against old results better
+##        # FIXED: restored to stable behaviour
+##        entry = (priority, self.count, item)
+##        # entry = (priority, item)
+##        heapq.heappush(self.heap, entry)
+##        self.count += 1
+##
+##    def pop(self):
+##        (_, _, item) = heapq.heappop(self.heap)
+##        #  (_, item) = heapq.heappop(self.heap)
+##        return item
+##
+##    def isEmpty(self):
+##        return len(self.heap) == 0
 
 def create_graph(vertices, cost_matrix):
     graph = {}
@@ -21,38 +56,6 @@ def create_graph(vertices, cost_matrix):
             c[vertex2] = cost_list[j]
             graph[vertex1] = c
     return graph
-
-def read_input():
-    # Read input
-    # Assign only until last 2 chars
-    # to ignore \r\n - carriage return, new line
-    # Use -1 if running on Unix like environment;
-    # i.e. ignore only last '\n'
-    
-    file = open('input.txt', 'rU')
-    
-    task = file.readline()[:-1]
-    source = file.readline()[:-1]
-    dest = file.readline()[:-1]
-    num_nodes = int(file.readline()[:-1])
-
-    # Read node list
-    nodes = []
-    index = num_nodes
-    while index > 0:
-        nodes.append(file.readline()[:-1])
-        index -= 1
-
-    # Read cost matrix
-    cost_matrix = []
-    index = num_nodes
-    while index > 0:
-        cost_list = file.readline()[:-1].split()
-        cost_list = [int(each) for each in cost_list]
-        cost_matrix.append(cost_list)
-        index -= 1
-
-    return [task, source, dest, num_nodes, nodes, cost_matrix]
 
 class Node:
     
@@ -116,17 +119,17 @@ def expand(graph, node, explored):
             child.parent = node
             child.path_cost = child.parent.path_cost + graph[node.state][each_child]
             child.depth = child.parent.depth + 1
-
+            
             global_nodes.append(child)
-
+            
             # TODO: Check for repeated states.
             # Refer slides 'session02-04', slide 106, 112
             # Slide 12 has 'Clean Robust Algorithm'
             # if not explored[each_child]:
-
+            
             if not explored[child.state]:
                 frontier.append(child)
-
+    
     frontier = sorted(frontier, key=lambda node: node.state)
     return frontier
 
@@ -148,14 +151,14 @@ def dfs(graph, source, dest):
     # Main Loop
     while True:
         if not stack:
-            return 'NoPathAvailable'
+            return 'DFS Failed!'
         node = stack.pop()
         expansion.append(node.state)
         explored[node.state] = True
         if node.state == dest:
             return [node, expansion]
         frontier = expand(graph, node, explored)
-        frontier.reverse()
+        frontier.reverse() # TODO: Check if this is correct
         for each_node in frontier:
             stack.append(each_node)
 
@@ -169,7 +172,7 @@ def ucs(graph, source, dest):
         explored[each] = False
     explored[s.state] = True
     expansion = []
-
+    
     while True:
         if not heap:
             return 'UCS Failed'
@@ -179,10 +182,11 @@ def ucs(graph, source, dest):
         
         if node.state == dest:
             return [node, expansion]
-
+        
         frontier = expand(graph, node, explored)
         for each_node in frontier:
             heapq.heappush(heap, each_node)
+
 
 def bfs(graph, source, dest):
     # Initialisation
@@ -195,7 +199,7 @@ def bfs(graph, source, dest):
         explored[each] = False
     explored[s.state] = True
     expansion = []
-
+    
     # Main Loop
     while True:
         if not Q:
@@ -213,7 +217,7 @@ def bfs(graph, source, dest):
             explored[each_node.state] = True
 
 def write_output(result, expansion):
-
+    
     lines = []
     
     i = 0
@@ -222,7 +226,7 @@ def write_output(result, expansion):
         out.append(expansion[i])
         out.append('-')
         i += 1
-
+    
     # Format output string from list
     lines.append(''.join(out[:-1]))
     
@@ -232,18 +236,18 @@ def write_output(result, expansion):
         path.append(node.state)
         path.append('-')
         node = node.parent
-
+    
     # Format output from path list
     path = path[:-1]
     path.reverse()
     lines.append(''.join(path))
-
+    
     # Format total cost into output
     lines.append(str(result.path_cost))
-    lines.append('')
     
-    with open('output.txt', 'w') as f:
-        f.write('\n'.join(lines))
+    f = open('output.txt', 'w')
+    f.writelines(lines)
+    f.close()
 
 
 v = ['an', 'bi', 'cl', 'da', 'al']
@@ -253,20 +257,6 @@ graph1 = {'Daniel': {'Daniel': 0, 'Elaine': 1, 'Claire': 0, 'Bill': 0, 'Andy': 1
 graph2 = {'Zoe': {'Zoe': 0, 'Bill': 1, 'Claire': 2, 'Daniel': 2, 'Elaine': 2, 'Andy': 0}, 'Bill': {'Zoe': 1, 'Bill': 0, 'Claire': 0, 'Daniel': 0, 'Elaine': 3, 'Andy': 4}, 'Claire': {'Zoe': 2, 'Bill': 0, 'Claire': 0, 'Daniel': 0, 'Elaine': 4, 'Andy': 3}, 'Daniel': {'Zoe': 2, 'Bill': 0, 'Claire': 0, 'Daniel': 0, 'Elaine': 2, 'Andy': 2}, 'Elaine': {'Zoe': 2, 'Bill': 3,'Claire': 4, 'Daniel': 2, 'Elaine': 0, 'Andy': 0}, 'Andy': {'Zoe': 0, 'Bill': 4, 'Claire': 3, 'Daniel': 2, 'Elaine': 0, 'Andy': 0}}
 vertices = ['Andy', 'Bill', 'Claire', 'Daniel', 'Elaine']
 
-input = [task, source, dest, num_nodes, vertices, cost_matrix] = read_input()
-graph = create_graph(vertices, cost_matrix)
+# [result, expansion] = bfs(graph2, 'Andy', 'Zoe')
 
-if task == '1':
-    [result, expansion] = bfs(graph, source, dest)
-
-elif task == '2':
-    [result, expansion] = dfs(graph, source, dest)
-
-elif task == '3':
-    [result, expansion] = ucs(graph, source, dest)
-
-write_output(result, expansion)
-
-# [result, expansion] = bfs(graph, source, dest)
-
-write_output(result, expansion)
+# write_output(result, expansion)
