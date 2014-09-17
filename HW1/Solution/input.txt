@@ -1,6 +1,6 @@
 3
 Andy
-Zoe
+Bill
 6
 Andy
 Bill
@@ -8,8 +8,8 @@ Claire
 Daniel
 Elaine
 Zoe
-0 4 3 2 0 0
-4 0 0 0 3 1
+0 14 3 2 0 0
+14 0 0 0 3 1
 3 0 0 0 4 2
 2 0 0 0 2 2
 0 3 4 2 0 2
