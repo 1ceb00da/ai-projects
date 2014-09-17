@@ -246,12 +246,6 @@ def write_output(result, expansion):
         f.write('\n'.join(lines))
 
 
-v = ['an', 'bi', 'cl', 'da', 'al']
-c = [[0,1,1,0,0],[1,0,5,4,0],[1,5,0,0,1],[0,4,0,0,0],[0,0,1,0,0]]
-g = create_graph(v,c)
-graph1 = {'Daniel': {'Daniel': 0, 'Elaine': 1, 'Claire': 0, 'Bill': 0, 'Andy': 1}, 'Elaine': {'Daniel': 1, 'Elaine': 0, 'Claire': 1, 'Bill': 1, 'Andy': 0}, 'Claire': {'Daniel': 0, 'Elaine': 1, 'Claire': 0, 'Bill': 0, 'Andy': 1}, 'Bill': {'Daniel': 0, 'Elaine': 1, 'Claire': 0, 'Bill': 0, 'Andy': 1}, 'Andy': {'Daniel': 1, 'Elaine': 0, 'Claire': 1, 'Bill': 1, 'Andy': 0}}
-graph2 = {'Zoe': {'Zoe': 0, 'Bill': 1, 'Claire': 2, 'Daniel': 2, 'Elaine': 2, 'Andy': 0}, 'Bill': {'Zoe': 1, 'Bill': 0, 'Claire': 0, 'Daniel': 0, 'Elaine': 3, 'Andy': 4}, 'Claire': {'Zoe': 2, 'Bill': 0, 'Claire': 0, 'Daniel': 0, 'Elaine': 4, 'Andy': 3}, 'Daniel': {'Zoe': 2, 'Bill': 0, 'Claire': 0, 'Daniel': 0, 'Elaine': 2, 'Andy': 2}, 'Elaine': {'Zoe': 2, 'Bill': 3,'Claire': 4, 'Daniel': 2, 'Elaine': 0, 'Andy': 0}, 'Andy': {'Zoe': 0, 'Bill': 4, 'Claire': 3, 'Daniel': 2, 'Elaine': 0, 'Andy': 0}}
-vertices = ['Andy', 'Bill', 'Claire', 'Daniel', 'Elaine']
 
 input = [task, source, dest, num_nodes, vertices, cost_matrix] = read_input()
 graph = create_graph(vertices, cost_matrix)
@@ -264,9 +258,5 @@ elif task == '2':
 
 elif task == '3':
     [result, expansion] = ucs(graph, source, dest)
-
-write_output(result, expansion)
-
-# [result, expansion] = bfs(graph, source, dest)
 
 write_output(result, expansion)
