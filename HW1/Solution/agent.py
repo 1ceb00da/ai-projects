@@ -408,8 +408,8 @@ elif task == '3':
 write_output(result, expansion)
 
 
-g = {'al': {'al': 0, 'da': 0, 'cl': 1, 'bi': 0, 'an': 0}, 'da': {'al': 0, 'da': 0, 'cl': 0, 'bi': 4, 'an': 0}, 'cl': {'al': 1, 'da': 0, 'cl': 0, 'bi': 5, 'an': 1}, 'bi': {'al': 0, 'da': 4, 'cl': 5, 'bi': 0, 'an': 1}, 'an': {'al': 0, 'da': 0, 'cl': 1, 'bi': 1, 'an': 0}}
-
-print "BFS -- s-'an', d-'al' for g in handout", robust_bfs(g, 'an', 'al')
-print "DFS -- s-'an', d-'al' for g in handout", robust_dfs(g, 'an', 'al')
-print "UCS -- s-'an', d-'al' for g in handout", robust_ucs(g, 'an', 'al')
+## g = {'al': {'al': 0, 'da': 0, 'cl': 1, 'bi': 0, 'an': 0}, 'da': {'al': 0, 'da': 0, 'cl': 0, 'bi': 4, 'an': 0}, 'cl': {'al': 1, 'da': 0, 'cl': 0, 'bi': 5, 'an': 1}, 'bi': {'al': 0, 'da': 4, 'cl': 5, 'bi': 0, 'an': 1}, 'an': {'al': 0, 'da': 0, 'cl': 1, 'bi': 1, 'an': 0}}
+##
+## print "BFS -- s-'an', d-'al' for g in handout", robust_bfs(g, 'an', 'al')
+## print "DFS -- s-'an', d-'al' for g in handout", robust_dfs(g, 'an', 'al')
+## print "UCS -- s-'an', d-'al' for g in handout", robust_ucs(g, 'an', 'al')
