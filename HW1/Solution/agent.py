@@ -1,11 +1,8 @@
 #! /usr/bin/python2.6
 # AI Homework 1
 from collections import deque
-
-import heapq
-import pdb
-
-global_nodes = []
+from heapq import heappush
+from heapq import heappop
 
 def create_graph(vertices, cost_matrix):
     graph = {}
@@ -63,12 +60,6 @@ class Node:
         self.depth = 0
     
     def __repr__(self):
-        ##        node = {}
-        ##        node['state'] = self.state
-        ##        node['parent'] = self.parent
-        ##        node['path_cost'] = self.path_cost
-        ##        node['depth'] = self.depth
-        ##        return repr(node)
         return repr((self.state, self.parent, self.path_cost, self.depth))
     
     def __str__(self):
@@ -172,7 +163,7 @@ def ucs(graph, source, dest):
 
     while True:
         if not heap:
-            return 'UCS Failed'
+            return 'NoPathAvailable'
         node = heapq.heappop(heap)
         expansion.append(node.state)
         explored[node.state] = True
@@ -199,7 +190,7 @@ def bfs(graph, source, dest):
     # Main Loop
     while True:
         if not Q:
-            return 'BFS Failed!'
+            return 'NoPathAvailable'
         node = Q.popleft()
         expansion.append(node.state)
         explored[node.state] = True
@@ -245,18 +236,180 @@ def write_output(result, expansion):
     with open('output.txt', 'w') as f:
         f.write('\n'.join(lines))
 
+#################################
+## Robust asearch algorithms conforming to
+## "alphabetical pop" special contraint
+def popleft(q):
+    # use depth instead of path_cost for bfs and dfs
+    candidates = [node for node in q if node.depth == q[0].depth]
+    candidates = sorted(candidates, key=lambda node: node.state)
+    popped = candidates[0]
+    q.remove(popped)
+    return popped
+
+def pop(stack):
+    candidates = [node for node in stack if stack[-1].depth == node.depth]
+    candidates = sorted(candidates, key=lambda node: node.state)
+    popped = candidates[0]
+    stack.remove(popped)
+    return popped
+
+def expand(graph, node, explored):
+    frontier = []
+    for each_child in graph[node.state]:
+        if graph[node.state][each_child]:
+            child = Node(each_child)
+            child.parent = node
+            child.path_cost = child.parent.path_cost + graph[node.state][each_child]
+            child.depth = child.parent.depth + 1
+            if not explored[child.state]:
+                frontier.append(child)
+    frontier = sorted(frontier, key=lambda node: node.state)
+    return frontier
+
+## Robust bfs
+def getChildren(graph, node):
+    children = []
+    for each_child in graph[node.state]:
+        if graph[each_child][node.state]:
+            child = Node(each_child)
+            child.parent = node
+            child.path_cost = child.parent.path_cost + graph[node.state][each_child]
+            child.depth = child.parent.depth + 1
+            children.append(child)
+    return children
+
+def robust_bfs(graph, source, dest):
+    openq = deque()
+    closedq = deque()
+    s = Node(source)
+    openq.append(s)
+    log = []
+    
+    while True:
+        #import pdb; pdb.set_trace()
+        if not openq:
+            return 'NoPathAvailable'
+        current = popleft(openq)
+        log.append(current.state)
+        if current.state == dest:
+            return [current, log]
+        children = getChildren(graph, current)
+        closedq.append(current)
+        while children:
+            child = children.pop()
+            open_ = [node.state for node in openq]
+            closed_ = [node.state for node in closedq]
+            
+            if child.state not in open_ and child.state not in closed_:
+                openq.append(child)
+            elif child.state in open_:
+                node = [node for node in openq if node.state == child.state].pop()
+                if node.path_cost > child.path_cost:
+                    openq.remove(node)
+                    openq.append(child)
+            elif child.state in closed_:
+                node = [node for node in closedq if node.state == child.state].pop()
+                if node.path_cost > child.path_cost:
+                    closedq.remove(node)
+                    openq.append(child)
+## End robust_bfs
+##
+## Begin robust_dfs
+
+def robust_dfs(graph, source, dest):
+    openq = deque()
+    closedq = deque()
+    s = Node(source)
+    openq.append(s)
+    log = []
+    
+    while True:
+        if not openq:
+            return 'NoPathAvailable'
+        current = pop(openq)
+        log.append(current.state)
+        if current.state == dest:
+            return [current, log]
+        children = getChildren(graph, current)
+        closedq.append(current)
+        while children:
+            child = children.pop()
+            open_ = [node.state for node in openq]
+            closed_ = [node.state for node in closedq]
+            
+            if child.state not in open_ and child.state not in closed_:
+                openq.append(child)
+            elif child.state in open_:
+                node = [node for node in openq if node.state == child.state].pop()
+                if node.path_cost > child.path_cost:
+                    openq.remove(node)
+                    openq.append(child)
+            elif child.state in closed_:
+                node = [node for node in closedq if node.state == child.state].pop()
+                if node.path_cost > child.path_cost:
+                    closedq.remove(node)
+                    openq.append(child)
 
 
-input = [task, source, dest, num_nodes, vertices, cost_matrix] = read_input()
+## End robust_dfs
+
+## Begin robust_ucs
+
+def robust_ucs(graph, source, dest):
+    openq = list()
+    closedq = deque()
+    s = Node(source)
+    heappush(openq, s)
+    log = []
+    
+    while True:
+        if not openq:
+            return 'NoPathAvailable'
+        current = heappop(openq)
+        log.append(current.state)
+        if current.state == dest:
+            return [current, log]
+        children = getChildren(graph, current)
+        closedq.append(current)
+        while children:
+            child = children.pop()
+            open_ = [node.state for node in openq]
+            closed_ = [node.state for node in closedq]
+            
+            if child.state not in open_ and child.state not in closed_:
+                heappush(openq, child)
+            elif child.state in open_:
+                node = [node for node in openq if node.state == child.state].pop()
+                if node.path_cost > child.path_cost:
+                    openq.remove(node)
+                    heappush(openq, child)
+            elif child.state in closed_:
+                node = [node for node in closedq if node.state == child.state].pop()
+                if node.path_cost > child.path_cost:
+                    closedq.remove(node)
+                    heappush(openq, child)
+
+## End robust_ucs
+#################################
+
+input_ = [task, source, dest, num_nodes, vertices, cost_matrix] = read_input()
 graph = create_graph(vertices, cost_matrix)
 
 if task == '1':
-    [result, expansion] = bfs(graph, source, dest)
+    [result, expansion] = robust_bfs(graph, source, dest)
 
 elif task == '2':
-    [result, expansion] = dfs(graph, source, dest)
+    [result, expansion] = robust_dfs(graph, source, dest)
 
 elif task == '3':
-    [result, expansion] = ucs(graph, source, dest)
+    [result, expansion] = robust_ucs(graph, source, dest)
 
 write_output(result, expansion)
+
+
+g = {'al': {'al': 0, 'da': 0, 'cl': 1, 'bi': 0, 'an': 0}, 'da': {'al': 0, 'da': 0, 'cl': 0, 'bi': 4, 'an': 0}, 'cl': {'al': 1, 'da': 0, 'cl': 0, 'bi': 5, 'an': 1}, 'bi': {'al': 0, 'da': 4, 'cl': 5, 'bi': 0, 'an': 1}, 'an': {'al': 0, 'da': 0, 'cl': 1, 'bi': 1, 'an': 0}}
+
+print "BFS -- s-'an', d-'al' for g in handout", robust_bfs(g, 'an', 'al')
+print "DFS -- s-'an', d-'al' for g in handout", robust_dfs(g, 'an', 'al')
+print "UCS -- s-'an', d-'al' for g in handout", robust_ucs(g, 'an', 'al')
