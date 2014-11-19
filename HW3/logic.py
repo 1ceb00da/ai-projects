@@ -286,8 +286,37 @@ kb4['Rules'] = [r4]
 kb4['Facts'] = ['Bo(Jo)']
 q = fol_bc_ask(kb4, 'Ap(Jo)', t3)
 
-print next(q)
+# print next(q)
 
+
+def is_rule(clause):
+    print clause
+
+def is_fact(clause):
+    pass
+
+def read_input():
+    f = file('input.txt', 'rU')
+
+    query = f.readline()[:-1]
+    num_clauses = int(f.readline()[:-1])
+    
+    kb = {}
+    kb ['Rules'] = []
+    kb ['Facts'] = []
+    
+    for clause in f:
+        clause = clause[:-1]
+        if is_rule(clause):
+            r = Rule(clause)
+            kb['Rules'].append(r)
+        elif is_fact(clause):
+            kb['Facts'].append(clause)
+    return [kb, query]
+
+[kb, query] = read_input()
+
+#
 ##th = {}
 ##unify('Knows(John,x)', 'Knows(y,Bill)', th)
 ##print th
