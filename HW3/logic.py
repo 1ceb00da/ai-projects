@@ -16,10 +16,6 @@ kb1['Facts'] = ["HasTraveled(John,Tiberia)", "HasFever(John)", "HasSymptom(John,
 inferred = []
 
 
-
-
-
-
 def get_args(x):
     # chcek if x == Knows(jo, jan)
     # if yes, then return (jo, jan) or [x, jan]
