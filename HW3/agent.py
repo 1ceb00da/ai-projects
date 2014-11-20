@@ -1,3 +1,4 @@
+#! /usr/bin/python2.6
 # AD
 # AI HW3
 
