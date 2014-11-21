@@ -6,4 +6,3 @@ HasTraveled(x,Tiberia)&HasFever(x)=>Diagnosis(x,LikelyInfected)
 HasTraveled(John,Tiberia)
 HasFever(John)
 HasSymptom(John,Diarrhea)
-
