@@ -38,7 +38,6 @@ def is_list(x):
 
 
 def unify_var(var, x, theta):
-    print 'in unify-var', ' unifying --', var, x, theta 
     if var in theta:
         val = theta[var]
         return unify(val, x, theta)
@@ -47,17 +46,15 @@ def unify_var(var, x, theta):
         return unify(var, val, theta)
     else:
         theta[var] = x
-        print 'adding to theta ', var, ' := ', x
+
         return theta
 def unify(x, y, theta):
     if type(theta) == type(None):
-        print 'in unify(x,y,theta); encountered theta nonetype'
+
         import pdb; pdb.set_trace();
     if theta == 'failure':
         return 'failure'
     elif x == y:
-        if not theta:
-            print 'theta is empty; ', x, y
         return theta
     elif is_variable(x):
         return unify_var(x, y, theta)
@@ -187,7 +184,6 @@ def fol_bc_and(KB, goals, theta):
     elif len(goals) == 0:
        yield theta
     else:
-        print goals
         f = first_sentence(goals)
         r = rest_sentence(goals)
         s = subst(theta, f)
@@ -244,3 +240,4 @@ else:
 
 with open('output.txt', 'w') as f:
     f.write('\n'.join([answer]))
+    f.write('\n')
