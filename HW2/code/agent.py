@@ -2,25 +2,57 @@
 ## Aditya Dhulipala
 
 from collections import namedtuple
+from helper import *
 
-def read_input():
-    # Read input
-    # Assign only until last 2 chars
-    # to ignore \r\n - carriage return, new line
-    # Use -1 if running on Unix like environment;
-    # i.e. ignore only last '\n'
+weights = [[99, -8, 8, 6, 6, 8, -8, 99], [-8, -24, -4, -3, -3, -4, -24, -8], [8, -4, 7, 4, 4, 7, -4, 8], [6, -3, 4, 0, 0, 4, -3, 6], [6, -3, 4, 0, 0, 4, -3, 6], [8, -4, 7, 4, 4, 7, -4, 8], [-8, -24, -4, -3, -3, -4, -24, -8], [99, -8, 8, 6, 6, 8, -8, 99]]
+st = [['*', '*', '*', '*', '*', '*', '*', '*'], ['*', '*', '*', '*', '*', '*', '*', '*'], ['*', '*', '*', '*', '*', '*', '*', '*'], ['*', '*', '*', 'O', 'X', '*', '*', '*'], ['*', '*', '*', 'X', 'O', '*', '*', '*'], ['*', '*', '*', '*', '*', '*', '*', '*'], ['*', '*', '*', '*', '*', '*', '*', '*'], ['*', '*', '*', '*', '*', '*', '*', '*']]
+
+
+
+#
+s = [['*', '*', '*', '*', '*', '*', '*', '*'], ['*', '*', '*', 'O', '*', '*', '*', '*'], ['*', '*', '*', 'O', '*', '*', '*', '*'], ['*', '*', '*', 'O', 'X', '*', '*', '*'], ['*', '*', '*', 'X', 'O', '*', '*', '*'], ['*', '*', '*', '*', '*', '*', '*', '*'], ['*', '*', '*', '*', '*', '*', '*', '*'], ['*', '*', '*', '*', '*', '*', '*', '*']]
+
+#
+
+pl = 'X'
+
+def ps(s):
+    for each in s:
+        print each
+
+def get_actions(state, player):
+    actions = set()
+    # TODO: Write cleaner API
+    # get_pos() is not necessary
+    pos = get_pos(state, player)
+    actions = get_moves_for_pos(state, player, pos)
+    return actions
+
+def cutoff(state, depth):
+    global cut_off_depth
+    if depth == cut_off_depth:
+        return True
+    else:
+        return False
+
+def result(state, action):
+    state = state[:]
+    print 'result', state, action
     
-    file = open('input.txt', 'rU')
+def min_val(state):
+    if cutoff(state, depth):
+        return eval_(state)
+    pass
+
+def minimax_decision(state, player):
+    actions = get_actions(state, player)
+    tmp = {}
+    for a in actions:
+        tmp[min_val(result(state, a))] = a
+    return tmp[max(tmp)]
+        
     
-    task = file.readline()[:-1]
-    player = file.readline()[:-1]
-    cut_off_depth = file.readline()[:-1]
+def alpha_beta(state, player):
+    pass
 
-    # Read current state
-    nodes = []
-    index = num_nodes
-    while index > 0:
-        nodes.append(file.readline()[:-1])
-        index -= 1
-
-    return [task, player, cut_off_depth, current_state]
+[task, player, cut_off_depth, state] = read_input()

@@ -1,0 +1,4 @@
+LostWeight(Alex)
+1
+HasSymptom(Alex,Diarrhea)=>LostWeight(Alex)
+
