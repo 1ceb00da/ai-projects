@@ -1,3 +1,5 @@
+#! /usr/bin/python
+
 ## Homework 2
 ## Aditya Dhulipala
 
