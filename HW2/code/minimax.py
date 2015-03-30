@@ -21,9 +21,8 @@ def get_actions(state, player):
     # TODO: maybe return actions after sort() - to ensure traverse order = positional order
     return actions
 
-def cutoff(state, depth):
-    global cut_off_depth
-    if depth == cut_off_depth:
+def cutoff(state, cut_off_depth, current_depth):
+    if current_depth == cut_off_depth:
         return True
     else:
         return False
@@ -32,29 +31,34 @@ def result(state, player, action):
     state = state[:]
     print 'TODO result --> state, player, action = ', state, player, action
 
-def max_val(state):
-    if cutoff(state, depth):
+def max_val(state, current_depth, cut_off_depth):
+    if cutoff(state, cut_off_depth, current_depth):
         return utility(state)
     v = -float('inf')
     actions = get_actions(state, player_TODO) # TODO: figure out how to pass player  val
     for a in actions:
-        v = max(v, min_val(result(state, a)))
+        v = max(v, min_val(result(state, a), current_depth+1))
     return v
 
-def min_val(state):
-    if cutoff(state, depth):
+def min_val(state, current_depth, cut_off_depth):
+    if cutoff(state, cut_off_depth, current_depth):
         return utility(state)
     v = float('inf')
     actions = get_actions(state, player_TODO) # TODO: figure out how to pass player  val
     for a in actions:
-        v = min(v, max_val(result(state, a)))
+        v = min(v, max_val(result(state, a), current_depth+1))
     return v
 
 
-def minimax_decision(state, player):
+def minimax_decision(state, player, cut_off_depth):
+
+    global MAX_PLAYER = player
+    global MIN_PLAYER = get_opp(player)
+    
     actions = get_actions(state, player)
     tmp = {}
+    start_depth = 0
     for a in actions:
-        tmp[min_val(result(state, player, a))] = a
+        tmp[min_val(result(state, player, a), start_depth, cut_off_depth)] = a
     return tmp[max(tmp)]
  
