@@ -50,9 +50,8 @@ def result(state, player, action):
     print 'TODO: Inside result() for pl,action= ', player, action
     directs = [flip_down, flip_downleft, flip_downright, flip_left,
                flip_right, flip_up, flip_upleft, flip_upright]
-    for each_direct in directs:
-        if each_direct(state, player, action):
-            pass
+    for flip_each_way in directs:
+        flip_each_way(state, player, action)
     return state
 
 def max_val(state, current_depth, cut_off_depth):
