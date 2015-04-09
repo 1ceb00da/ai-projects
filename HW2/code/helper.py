@@ -1,3 +1,257 @@
+
+
+def ps(s):
+    for each in s:
+        print each
+
+# Flip opponent for valid moves functions
+def flip_right(state, player, flip_start_pos):
+    i = flip_start_pos[0]
+    j = flip_start_pos[1]
+
+    if j >= 7:
+        return
+    
+    j = j + 1
+    opp = get_opp(player)
+    flip_end_pos = ()
+    
+    if state[i][j] == opp:
+        while state[i][j] == opp:
+            j = j + 1
+            if (not (0 <= j <= 7)):
+                break
+            if (state[i][j] == player):
+                flip_end_pos = (i,j)
+                break
+    if flip_end_pos:
+        #state = state[:]
+        for _j in xrange(flip_start_pos[1], flip_end_pos[1]+1):
+            state[i][_j] = player
+        print 'flip_right success from ', flip_start_pos, ' to ', flip_end_pos
+    return state
+
+def flip_downleft(state, player, flip_start_pos):
+    i = flip_start_pos[0]
+    j = flip_start_pos[1]
+
+    if i >= 7 or j <= 0:
+        return
+    
+    opp = get_opp(player)
+
+    i += 1
+    j -= 1
+    flip_end_pos = ()
+
+    if state[i][j] == opp:
+        while (state[i][j] == opp ):
+            i += 1
+            j -= 1
+            if (not ((0 <= i <= 7) and (0 <= j <= 7))):
+                break
+            if (state[i][j] == player):
+                flip_end_pos = (i,j)
+                break
+    if flip_end_pos:
+        while flip_start_pos[0] <= i <= flip_end_pos[0] and flip_end_pos[1] <= j <= flip_start_pos[1]:
+            state[i][j] = player
+            i += 1
+            j -= 1
+        print 'flip downleft success'
+    return state
+
+    
+
+def flip_downright(state, player, flip_start_pos):
+    i = flip_start_pos[0]
+    j = flip_start_pos[1]
+
+    if i >= 7 or j >= 7:
+        return
+        
+    opp = get_opp(player)
+    
+    j += 1
+    i += 1
+    flip_end_pos = ()
+
+    if state[i][j] == opp:
+        while (state[i][j] == opp ):
+            j += 1
+            i += 1
+            if (not ((0 <= i <= 7) and (0 <= j <= 7))):
+                break
+            if (state[i][j] == player):
+                flip_end_pos = (i,j)
+                break
+    if flip_end_pos:
+        while flip_start_pos[0] <= i <= flip_end_pos[0] and flip_start_pos[1] <= j <= flip_end_pos[1]:
+            state[i][j] = player
+            i += 1
+            j += 1
+        print 'flip downright success'
+    return state
+
+
+def flip_left(state, player, flip_start_pos):
+    i = flip_start_pos[0]
+    j = flip_start_pos[1]
+
+    if j <= 0:
+        return
+    
+    opp = get_opp(player)
+    
+    j = j - 1
+    flip_end_pos = ()
+    
+    if state[i][j] == opp:
+        while (state[i][j] == opp ):
+            j = j - 1
+            if (not (0 <= j <= 7)):
+                break
+            if (state[i][j] == player):
+                flip_end_pos = (i,j)
+                break
+    if flip_end_pos:
+        for _j in xrange(flip_end_pos[1], flip_start_pos[1]+1):
+            state[i][_j] = player
+        print 'flip_left success from ', flip_start_pos, ' to ', flip_end_pos
+    return state
+
+
+def flip_down(state, player, flip_start_pos):
+    i = flip_start_pos[0]
+    j = flip_start_pos[1]
+
+    if (i >= 7):
+        return
+    
+    opp = get_opp(player)
+    
+    i = i + 1
+    flip_end_pos = ()
+    if state[i][j] == opp:
+        while (state[i][j] == opp ):
+            i = i + 1
+            if (not (0 <= i <= 7)):
+                break
+            if (state[i][j] == player):
+                flip_end_pos = (i, j)
+                break
+    if flip_end_pos:
+        i = flip_start_pos[0]
+        
+        while flip_start_pos[0] <= i <= flip_end_pos[0]:
+            state[i][j] = player
+            i += 1
+
+        for _i in xrange(flip_start_pos[0], flip_end_pos[0]+1):
+            state[_i][j] = player
+        print 'flip_down success from ', flip_start_pos, ' to ', flip_end_pos
+    return state
+
+
+def flip_up(state, player, flip_start_pos):
+    i = flip_start_pos[0]
+    j = flip_start_pos[1]
+
+    if i <= 0:
+        return
+
+    opp = get_opp(player)
+    
+    i = i - 1
+    flip_end_pos = ()
+    
+    if state[i][j] == opp:
+        while (state[i][j] == opp ):
+            i = i - 1
+            if (not (0 <= i <= 7)):
+                break
+            if (state[i][j] == player):
+                flip_end_pos = (i,j)
+                break
+    if flip_end_pos:
+        i = flip_start_pos[0]
+        
+        while flip_end_pos[0] <= i <= flip_start_pos[0]:
+            state[i][j] = player
+            i -= 1
+        print 'flip_up success from ', flip_start_pos, ' to ', flip_end_pos
+    return state
+
+def flip_upleft(state, player, flip_start_pos):
+    i = flip_start_pos[0]
+    j = flip_start_pos[1]
+
+    if i <= 0 or j <= 0:
+        return
+    
+    opp = get_opp(player)
+    
+    i = i - 1
+    j = j - 1
+    flip_end_pos = ()
+    
+    if state[i][j] == opp:
+        while (state[i][j] == opp ):
+            i -= 1
+            j -= 1
+            if (not ((0 <= i <= 7) and (0 <= j <= 7))):
+                break
+            if (state[i][j] == player):
+                flip_end_pos = (i,j)
+                break
+    if flip_end_pos:
+        i = flip_start_pos[0]
+        j = flip_start_pos[1]
+        
+        while flip_end_pos[0] <= i <= flip_start_pos[0] and flip_end_pos[1] <= j <= flip_start_pos[1]:
+            state[i][j] = player
+            i -= 1
+            j -= 1
+        print 'flip_upleft success'
+    return state
+
+
+def flip_upright(state, player, flip_start_pos):
+    i = flip_start_pos[0]
+    j = flip_start_pos[1]
+
+    if i <= 0 or j >= 7:
+        return
+    
+    opp = get_opp(player)
+
+    i = i - 1
+    j = j + 1
+    flip_end_pos = ()
+    
+    if state[i][j] == opp:
+        while (state[i][j] == opp ):
+            i -= 1
+            j += 1
+            if (not ((0 <= i <= 7) and (0 <= j <= 7))):
+                break
+            if (state[i][j] == player):
+                flip_end_pos = (i,j)
+                break
+    if flip_end_pos:
+        i = flip_start_pos[0]
+        j = flip_start_pos[1]
+
+        while flip_end_pos[0] <= i <= flip_start_pos[0] and flip_start_pos[1] <= j <= flip_end_pos[1]:
+            state[i][j] = player
+            i -= 1
+            j += 1
+        print 'flip upright success'
+    return state
+         
+
+## end
+
 def get_pos(state, player):
     pos = []
     for i in range(8):

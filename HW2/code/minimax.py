@@ -45,7 +45,7 @@ def utility(state, player):
     return util
 
 def result(state, player, action):
-    state = state[:]
+    #state = state[:]
     
     print 'TODO: Inside result() for pl,action= ', player, action
     directs = [flip_down, flip_downleft, flip_downright, flip_left,
