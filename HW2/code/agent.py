@@ -78,6 +78,7 @@ s4 = [
 ['*', '*', '*', '*', '*', '*', '*', '*']
 ]
 
+# test
 for a in get_actions (s4, 'X'):
 	x = result(s4, 'X', a)
 	print ps(s4)
