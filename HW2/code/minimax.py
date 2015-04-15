@@ -69,11 +69,15 @@ def max_val(state, current_depth, cut_off_depth):
     global MAX_PLAYER
     print MAX_PLAYER, 'max pla'
     if cutoff(state, cut_off_depth, current_depth):
-        return utility(state, MAX_PLAYER)
+        # Since we've reached the cutoff,
+        # whatever state was passed here
+        # was passed from the min_player
+        # HENCE - Return untility for MIN_PLAYER
+        return utility(state, MIN_PLAYER)
     v = -float('inf')
     actions = get_actions(state, MAX_PLAYER) # TODO: figure out how to pass player  val
     for a in actions:
-        v = max(v, min_val(result(state, MIN_PLAYER, a), current_depth+1, cut_off_depth))
+        v = max(v, min_val(result(state, MAX_PLAYER, a), current_depth+1, cut_off_depth))
     return v
 
 def min_val(state, current_depth, cut_off_depth):
@@ -81,7 +85,11 @@ def min_val(state, current_depth, cut_off_depth):
     print MIN_PLAYER, 'min pl'
 
     if cutoff(state, cut_off_depth, current_depth):
-        return utility(state, MIN_PLAYER)
+        # Since we've reached the cutoff,
+        # whatever state was passed here
+        # was passed from the max_player
+        # HENCE - Return untility for MAX_PLAYER
+        return utility(state, MAX_PLAYER) 
     v = float('inf')
     actions = get_actions(state, MIN_PLAYER) # TODO: figure out how to pass player  val
     for a in actions:
@@ -99,9 +107,9 @@ def minimax_decision(state, player, cut_off_depth):
     
     actions = get_actions(state, player)
     tmp = {}
-    start_depth = 0
+    start_depth = 1
     for a in actions:
-        tmp[a] = min_val(result(state, MIN_PLAYER, a), start_depth, cut_off_depth)
+        tmp[a] = min_val(result(state, MAX_PLAYER, a), start_depth, cut_off_depth)
     print 'tmp= ', tmp
     
     return tmp[max(tmp)]
