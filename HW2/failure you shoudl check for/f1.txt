@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "<pyshell#142>", line 1, in <module>
+    minimax_decision(s, "X", 1)
+  File "C:\Users\Aditya Dhulipala\Documents\GitHub\ai-projects\HW2\code\minimax.py", line 100, in minimax_decision
+    actions = get_actions(state, player)
+  File "C:\Users\Aditya Dhulipala\Documents\GitHub\ai-projects\HW2\code\minimax.py", line 21, in get_actions
+    actions = get_moves_for_pos(state, player, pos)
+  File "C:\Users\Aditya Dhulipala\Documents\GitHub\ai-projects\HW2\code\helper.py", line 415, in get_moves_for_pos
+    down_move = check_down(_state, player, each_pos)
+  File "C:\Users\Aditya Dhulipala\Documents\GitHub\ai-projects\HW2\code\helper.py", line 302, in check_down
+    if _state[i][j] == opp:
+IndexError: list index out of range
+>>> ps(s)
+['*', '*', '*', '*', '*', '*', '*', '*']
+['*', 'O', 'O', 'O', 'O', 'O', 'O', '*']
+['*', 'O', 'O', 'O', 'O', 'O', 'O', '*']
+['*', 'O', 'O', 'X', 'X', 'O', 'O', '*']
+['*', 'O', 'O', 'X', 'X', 'O', 'O', '*']
+['*', 'O', 'O', 'O', 'O', 'X', 'O', '*']
+['*', 'O', 'O', 'O', 'O', 'O', 'X', '*']
+['*', '*', '*', '*', '*', '*', '*', 'X']
+
+
+check_down failed for above state

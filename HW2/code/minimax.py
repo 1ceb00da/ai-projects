@@ -20,6 +20,8 @@ def get_actions(state, player):
     pos = get_pos(state, player)
     actions = get_moves_for_pos(state, player, pos)
     # TODO: maybe return actions after sort() - to ensure traverse order = positional order
+    actions = list(actions)
+    actions.sort()
     return actions
 
 def cutoff(state, cut_off_depth, current_depth):
@@ -44,15 +46,24 @@ def utility(state, player):
                 
     return util
 
+def make_copy(some_state):
+    copy = [['null' for i in xrange(8)] for j in xrange(8)]
+    for row in xrange(8):
+        for col in xrange(8):
+            copy[row][col] = some_state[row][col]
+    return copy
+
 def result(state, player, action):
-    #state = state[:]
-    
-    print 'TODO: Inside result() for pl,action= ', player, action
+    state_copy = make_copy(state)
     directs = [flip_down, flip_downleft, flip_downright, flip_left,
                flip_right, flip_up, flip_upleft, flip_upright]
     for flip_each_way in directs:
-        flip_each_way(state, player, action)
-    return state
+        #print flip_each_way, 'for action', action
+        r = flip_each_way(state_copy, player, action)
+        if r:
+            pass
+            #print 'success for ', flip_each_way
+    return state_copy
 
 def max_val(state, current_depth, cut_off_depth):
     global MAX_PLAYER
@@ -90,7 +101,8 @@ def minimax_decision(state, player, cut_off_depth):
     tmp = {}
     start_depth = 0
     for a in actions:
-        tmp[min_val(result(state, player, a), start_depth, cut_off_depth)] = a
+        tmp[a] = min_val(result(state, MIN_PLAYER, a), start_depth, cut_off_depth)
     print 'tmp= ', tmp
+    
     return tmp[max(tmp)]
  

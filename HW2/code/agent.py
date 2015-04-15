@@ -79,8 +79,17 @@ s4 = [
 ]
 
 # test
-for a in get_actions (s4, 'X'):
-	x = result(s4, 'X', a)
-	print ps(s4)
-	print '\n -- action -- end -- '
-	break
+print "--END--", '\n','\n'
+print 'line num 83 test fn'
+acts = get_actions (s4, 'X')
+
+from collections import defaultdict
+
+d = {}
+for a in acts:
+    newstate = result(s4, 'X', a)
+    u = utility(newstate, 'X')
+    d[a] = u
+    #print utility(result(s4, 'X', a), 'X')
+    #print '\n -- action -- end -- '
+
