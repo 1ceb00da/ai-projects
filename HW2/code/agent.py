@@ -25,10 +25,6 @@ def alpha_beta(state, player):
 
 [task, player, cut_off_depth, state] = read_input()
 
-print 'started....try minimax_decision(s, "X", 1)'
-
-
-
 
 s1 = [
 
@@ -78,18 +74,51 @@ s4 = [
 ['*', '*', '*', '*', '*', '*', '*', '*']
 ]
 
-# test
-print "--END--", '\n','\n'
-print 'line num 83 test fn'
-acts = get_actions (s4, 'X')
+s5 = [
+['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+['*', 'O', 'O', 'O', 'O', 'O', 'O', '*'],
+['*', 'O', 'O', 'O', 'O', 'O', 'O', '*'],
+['*', 'O', 'O', 'O', '*', 'O', 'O', '*'],
+['*', 'O', 'O', 'O', 'O', 'O', 'O', '*'],
+['*', 'O', 'O', 'O', 'O', 'O', 'O', '*'],
+['*', 'O', 'O', 'O', 'O', 'O', 'O', '*'],
+['X', '*', '*', '*', '*', '*', '*', 'X']
+]
 
-from collections import defaultdict
+s6 = [
+['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+['*', 'O', 'O', 'O', 'O', 'O', 'O', '*'],
+['*', 'O', 'O', 'O', 'O', 'O', 'O', '*'],
+['*', 'O', 'O', 'O', '*', 'O', 'O', '*'],
+['*', 'O', 'O', 'O', 'O', 'O', 'O', '*'],
+['*', 'O', 'O', 'O', 'O', 'O', 'O', '*'],
+['*', 'O', 'O', 'O', 'O', 'O', 'O', '*'],
+['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+]
 
-d = {}
-for a in acts:
-    newstate = result(s4, 'X', a)
-    u = utility(newstate, 'X')
-    d[a] = u
-    #print utility(result(s4, 'X', a), 'X')
-    #print '\n -- action -- end -- '
+### test
+##print "--END--", '\n','\n'
+##print 'line num 83 test fn'
+##acts = get_actions (s4, 'X')
 
+##d = {}
+##for a in acts:
+##    newstate = result(s4, 'X', a)
+##    u = utility(newstate, 'X')
+##    d[a] = u
+##    #print utility(result(s4, 'X', a), 'X')
+##    #print '\n -- action -- end -- '
+
+def pra(s,p):
+    acts = get_actions(s,p)
+    print len(acts), ' -- num actions'
+    print acts
+    print '\n',
+    for a in acts:
+        ns = result(s,p,a)
+        ps(s)
+        print p, ' moves to ', a
+        ps(ns)
+        raw_input()
+        
+print 'started....try minimax_decision(s, "X", 1)', '\n', 'pra(s,"X")'

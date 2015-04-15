@@ -285,6 +285,9 @@ def check_up(_state, player, pos):
     opp = get_opp(player)
     
     i = i - 1
+
+    if (not ((0 <= i <= 7) and ( 0<= j <= 7)) ):
+        return
     if _state[i][j] == opp:
         while (_state[i][j] == opp ):
             i = i - 1
@@ -299,6 +302,8 @@ def check_down(_state, player, pos):
     opp = get_opp(player)
     
     i = i + 1
+    if (not ((0 <= i <= 7) and ( 0<= j <= 7)) ):
+        return
     if _state[i][j] == opp:
         while (_state[i][j] == opp ):
             i = i + 1
@@ -313,6 +318,8 @@ def check_left(_state, player, pos):
     opp = get_opp(player)
     
     j = j - 1
+    if (not ((0 <= i <= 7) and ( 0<= j <= 7)) ):
+        return
     if _state[i][j] == opp:
         while (_state[i][j] == opp ):
             j = j - 1
@@ -327,6 +334,8 @@ def check_right(_state, player, pos):
     opp = get_opp(player)
     
     j = j + 1
+    if (not ((0 <= i <= 7) and ( 0<= j <= 7)) ):
+        return
     if _state[i][j] == opp:
         while (_state[i][j] == opp ):
             j = j + 1
@@ -342,6 +351,8 @@ def check_upleft(_state, player, pos):
     
     i = i - 1
     j = j - 1
+    if (not ((0 <= i <= 7) and ( 0<= j <= 7)) ):
+        return
     if _state[i][j] == opp:
         while (_state[i][j] == opp ):
             i -= 1
@@ -358,6 +369,8 @@ def check_upright(_state, player, pos):
     
     i = i - 1
     j = j + 1
+    if (not ((0 <= i <= 7) and ( 0<= j <= 7)) ):
+        return
     if _state[i][j] == opp:
         while (_state[i][j] == opp ):
             i -= 1
@@ -374,6 +387,8 @@ def check_downleft(_state, player, pos):
 
     i += 1
     j -= 1
+    if (not ((0 <= i <= 7) and ( 0<= j <= 7)) ):
+        return
     if _state[i][j] == opp:
         while (_state[i][j] == opp ):
             i += 1
@@ -390,6 +405,8 @@ def check_downright(_state, player, pos):
     
     j += 1
     i += 1
+    if (not ((0 <= i <= 7) and ( 0<= j <= 7)) ):
+        return
     if _state[i][j] == opp:
         while (_state[i][j] == opp ):
             j += 1
