@@ -4,6 +4,19 @@ def ps(s):
     for each in s:
         print each
 
+from string import ascii_lowercase
+def pa(act):
+    # Remeber: Format of action = (i, j)
+    # (i, j) = (1,2) , (3, 4) etc
+    # i = number
+    # j = letter
+    # if   a = (i,j)
+    # then x = ascii_lowercase[a[1]] + str(a[0])
+    # now x = 'd2', 'c3' etc (add +1 to num to get 1-index based repr)
+    return (str(ascii_lowercase[act[1]]) + str(act[0]+1))
+
+
+
 # Flip opponent for valid moves functions
 def flip_right(_state, player, flip_start_pos):
     i = flip_start_pos[0]
