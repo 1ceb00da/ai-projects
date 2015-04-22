@@ -53,61 +53,87 @@ def result(state, player, action):
     for flip_each_way in directs:
         #print flip_each_way, 'for action', action
         r = flip_each_way(state_copy, player, action)
-        if r:
-            pass
-            #print 'success for ', flip_each_way
+##        if r:
+##            pass
+##            #print 'success for ', flip_each_way
     return state_copy
 
-def max_val(state, current_depth, cut_off_depth, calling_action, value_of_node):
-    global MAX_PLAYER
-    if calling_action not in value_of_node:
-        value_of_node[calling_action] = float('inf')
+def print_formatted(node, depth, value):
+    if value == float('inf'):
+        value = 'Infinity'
+    elif value == -float('inf'):
+        value = '-Infinity'
 
-    #print MAX_PLAYER, 'max pla'
-    print pa(calling_action),current_depth,value_of_node[calling_action]
+    print str(node) + ',' + str(depth) + ',' + str(value)
+
+def update_node_vals(node, val, which):
+    val1 = val
+    val2 = value_of_node[node]
+    if abs(val1) == float('inf') or abs(val2) == float('inf'):
+        which = 'force_update'
+    if which == 'force_update':
+        value_of_node[node] = val
+    elif which == 'keep_min':
+        value_of_node[node] = min(val1,val2)
+    elif which == 'keep_max':
+        value_of_node[node] = max(val1,val2)
+    
+def max_val(state, current_depth, cut_off_depth, calling_action):
+    global MAX_PLAYER
+    global value_of_node
+    if calling_action not in value_of_node:
+        value_of_node[calling_action] = -float('inf')
+    if (current_depth < cut_off_depth):
+        print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
 
     if cutoff(state, cut_off_depth, current_depth):
-        # Since we've reached the cutoff,
-        # whatever state was passed here
-        # was passed from the min_player
-        # HENCE - Return untility for MIN_PLAYER
-        value_of_node[calling_action] = utility(result(state, MAX_PLAYER, calling_action), MAX_PLAYER)
+        util_max = utility(result(state, MAX_PLAYER, calling_action), MAX_PLAYER) 
+        update_node_vals(calling_action, util_max, 'keep_min')
+        print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
         return utility(state, MIN_PLAYER)
-    v = float('inf')
-    actions = get_actions(state, MAX_PLAYER) # TODO: figure out how to pass player  val
+    v = -float('inf')
+    actions = get_actions(state, MAX_PLAYER)
     for a in actions:
-        new_val = min_val(result(state, MAX_PLAYER, a), current_depth+1, cut_off_depth, a, value_of_node)
-        print pa(calling_action),current_depth,value_of_node[a]
+        new_val = min_val(result(state, MAX_PLAYER, a), current_depth+1, cut_off_depth, a)
+        value_of_node[calling_action] = max(value_of_node[calling_action],value_of_node[a])
+        print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
         v = max(v, new_val)
     return v
 
-def min_val(state, current_depth, cut_off_depth, calling_action, value_of_node):
+def min_val(state, current_depth, cut_off_depth, calling_action):
     global MIN_PLAYER
+    global value_of_node
     if calling_action not in value_of_node:
-        value_of_node[calling_action] = -float('inf')
-    #print MIN_PLAYER, 'min pl'
+        value_of_node[calling_action] = float('inf')
 
-    print pa(calling_action),current_depth,value_of_node[calling_action]
+    if current_depth < cut_off_depth:
+        print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
     
     if cutoff(state, cut_off_depth, current_depth):
-        # Since we've reached the cutoff,
-        # whatever state was passed here
-        # was passed from the max_player
-        # HENCE - Return untility for MAX_PLAYER
-        value_of_node[calling_action] = utility(result(state, MIN_PLAYER, calling_action), MIN_PLAYER)
-        return utility(state, MAX_PLAYER) 
-    v = -float('inf')
-    actions = get_actions(state, MIN_PLAYER) # TODO: figure out how to pass player val
+        util_min = utility(result(state, MIN_PLAYER, calling_action), MIN_PLAYER)
+        update_node_vals(calling_action, util_min, 'keep_max')
+        print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
+        return utility(state, MAX_PLAYER)
+    
+    v = float('inf')
+    actions = get_actions(state, MIN_PLAYER)
     for a in actions:
-        new_val = max_val(result(state, MIN_PLAYER, a), current_depth+1, cut_off_depth, a, value_of_node)
-        print pa(calling_action),current_depth,value_of_node[a]
+        new_val = max_val(result(state, MIN_PLAYER, a), current_depth+1, cut_off_depth, a)
+        value_of_node[calling_action] = min(value_of_node[calling_action],value_of_node[a])
+        print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
         v = min(v, new_val)
     return v
 
 def minimax_decision(state, player, cut_off_depth):
+#### Uncomment to output to file
+##    import sys
+##    sys.stdout = open('traver_log', 'w')
+
     print 'Node,Depth,Value'
     print 'Root,0,-Infinity'
     global MAX_PLAYER, MIN_PLAYER
+    global value_of_node
+    value_of_node = {'root':-float('inf')}
 
     MAX_PLAYER = player
     MIN_PLAYER = get_opp(player)
@@ -115,14 +141,13 @@ def minimax_decision(state, player, cut_off_depth):
     actions = get_actions(state, MAX_PLAYER)
     tmp = {}
     start_depth = 1
-    value_of_node = {}
-    
-    for a in actions:
-        tmp[a] = min_val(result(state, MAX_PLAYER, a), start_depth, cut_off_depth, a, value_of_node)
-        value_of_node['root'] = tmp[a]
-        print 'Root,0,',value_of_node['root']
 
-    print 'tmp = ', tmp
-    
-    return tmp[max(tmp)]
+    for a in actions:
+        tmp[a] = min_val(result(state, MAX_PLAYER, a), start_depth, cut_off_depth, a)
+        value_of_node['root'] = max(value_of_node['root'],value_of_node[a])
+        print 'root,0,' + str(value_of_node['root'])
+    choices = [(value_of_node[child], pa(child)) for child in actions]
+    return choices
+    # uncomment if return necessary
+    #return value_of_node['root']
  
