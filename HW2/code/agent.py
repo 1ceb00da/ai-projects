@@ -20,7 +20,7 @@ a = [(1, 2), (4, 5), (5, 4), (3, 2), (0, 3)]
 
 pl = 'X'
 
-   
+
 def alpha_beta(state, player):
     pass
 
@@ -62,5 +62,12 @@ def pra(s,p):
         print p, ' moves to ', a
         ps(ns)
         raw_input()
-        
-print 'started....try minimax_decision(s, "X", 1)', '\n', 'pra(s,"X")'
+
+print 'started.... try \n', 'minimax_decision(s, "X", 1)', '\n', 'pra(s,"X")'
+print 'try:'
+print 'minimax_decision(tst, "X", 1)'
+print 'ps(tst)'
+print '\n'
+print 'run:\n', 'minimax_decision(st, "X", 2)'
+
+minimax_decision(st, 'X', 2)
