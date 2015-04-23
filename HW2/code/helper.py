@@ -13,6 +13,8 @@ def pa(act):
     # if   a = (i,j)
     # then x = ascii_lowercase[a[1]] + str(a[0])
     # now x = 'd2', 'c3' etc (add +1 to num to get 1-index based repr)
+    if act == 'root':
+        return act
     return (str(ascii_lowercase[act[1]]) + str(act[0]+1))
 
 

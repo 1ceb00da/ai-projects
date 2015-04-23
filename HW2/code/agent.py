@@ -5,7 +5,8 @@
 
 from collections import namedtuple
 from helper import read_input
-from minimax import *
+from minimax import minimax_decision
+from alpha_beta import alpha_beta_search
 from test_states import *
 
 weights = [[99, -8, 8, 6, 6, 8, -8, 99], [-8, -24, -4, -3, -3, -4, -24, -8], [8, -4, 7, 4, 4, 7, -4, 8], [6, -3, 4, 0, 0, 4, -3, 6], [6, -3, 4, 0, 0, 4, -3, 6], [8, -4, 7, 4, 4, 7, -4, 8], [-8, -24, -4, -3, -3, -4, -24, -8], [99, -8, 8, 6, 6, 8, -8, 99]]
@@ -27,6 +28,19 @@ def alpha_beta(state, player):
 [task, player, cut_off_depth, state] = read_input()
 
 
+if int(task) == 2:
+    [result_state, traverse_log, choices, vals] = minimax_decision(state, player, int(cut_off_depth))
+elif int(task) == 3:
+    [result_state, traverse_log, choices, vals] = minimax_decision(state, player, int(cut_off_depth))
+
+
+import sys
+sys.stdout = sys.__stdout__
+
+print result_state
+print traverse_log
+
+#import pdb; pdb.set_trace()
 
 ### test
 ##print "--END--", '\n','\n'
@@ -69,5 +83,6 @@ print 'minimax_decision(tst, "X", 1)'
 print 'ps(tst)'
 print '\n'
 print 'run:\n', 'minimax_decision(st, "X", 2)'
+print 'run:\n', 'alpha_beta_search(st, "X", 2)'
 
-minimax_decision(st, 'X', 2)
+#minimax_decision(st, 'X', 2)
