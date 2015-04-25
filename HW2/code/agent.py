@@ -33,9 +33,9 @@ if int(task) == 2:
 elif int(task) == 3:
     [result_state, traverse_log, choices, vals] = minimax_decision(state, player, int(cut_off_depth))
 
-
-import sys
-sys.stdout = sys.__stdout__
+##
+##import sys
+##sys.stdout = sys.__stdout__()
 
 print result_state
 print traverse_log

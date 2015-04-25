@@ -163,6 +163,8 @@ def minimax_decision(state, player, cut_off_depth):
     log = []
     log.append( 'Node,Depth,Value')
     log.append( 'Root,0,-Infinity')
+    print 'Node,Depth,Value'
+    print 'Root,0,-Infinity'
     
     value_of_node = {'root':-float('inf')}
 
