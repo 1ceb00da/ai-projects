@@ -111,6 +111,10 @@ def max_val(state, current_depth, cut_off_depth, calling_action):
         return utility(state, MIN_PLAYER)
     v = -float('inf')
     actions = get_actions(state, MAX_PLAYER)
+
+    # Insert code for
+    # pass moves
+    
     for a in actions:
         new_val = min_val(result(state, MAX_PLAYER, a), current_depth+1, cut_off_depth, a)
         value_of_node[calling_action] = max(value_of_node[calling_action],value_of_node[a])
@@ -172,9 +176,17 @@ def minimax_decision(state, player, cut_off_depth):
     MIN_PLAYER = get_opp(player)
     
     actions = get_actions(state, MAX_PLAYER)
-    tmp = {}
-    start_depth = 1
 
+    # If no actions return
+    # pass
+    if len(actions) == 0:
+        util_val = utility(state, player)
+        t_log = ['root,0,' + str(util_val)]
+        result_pack = [state, t_log, None, None]
+        return result_pack
+    
+    tmp = {}
+    start_depth = 1    
     for a in actions:
         tmp[a] = min_val(result(state, MAX_PLAYER, a), start_depth, cut_off_depth, a)
         value_of_node['root'] = max(value_of_node['root'],value_of_node[a])
@@ -186,14 +198,20 @@ def minimax_decision(state, player, cut_off_depth):
                value_of_node[child] == rootval]
     choices.sort()
     result_state = result(state, player, choices[0])
+
+    result_pack = [make_copy(result_state), log[:], choices[:], dict(value_of_node)]
+    return result_pack
+
+def greedy(state, player):
+
+    actions = get_actions(state, player)
+    max_a = 'None'
+    max_v = -float('inf')
     
-##    f.close()
-##    sys.stdout = sys.__stdout__
-##
-##    with open('traverse.log', 'r') as f:
-##        traverse_log = f.readlines()
-   # os.remove('traverse.log')
-    return [make_copy(result_state), log[:], choices[:], dict(value_of_node)]
-    # uncomment if return necessary
-    #return value_of_node['root']
- 
+    for a in actions:
+        v = utility(result(state, player, a), player)
+        if v > max_v:
+            max_v = v
+            max_a = a
+    return result(state, player, max_a)
+    

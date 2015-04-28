@@ -4,9 +4,11 @@
 ## Aditya Dhulipala
 
 from collections import namedtuple
-from helper import read_input
+from helper import *
 from minimax import minimax_decision
+from minimax import greedy
 from alpha_beta import alpha_beta_search
+from alpha_beta import alpha_beta_search_
 from test_states import *
 
 weights = [[99, -8, 8, 6, 6, 8, -8, 99], [-8, -24, -4, -3, -3, -4, -24, -8], [8, -4, 7, 4, 4, 7, -4, 8], [6, -3, 4, 0, 0, 4, -3, 6], [6, -3, 4, 0, 0, 4, -3, 6], [8, -4, 7, 4, 4, 7, -4, 8], [-8, -24, -4, -3, -3, -4, -24, -8], [99, -8, 8, 6, 6, 8, -8, 99]]
@@ -20,41 +22,6 @@ a = [(1, 2), (4, 5), (5, 4), (3, 2), (0, 3)]
 #
 
 pl = 'X'
-
-
-def alpha_beta(state, player):
-    pass
-
-[task, player, cut_off_depth, state] = read_input()
-
-
-if int(task) == 2:
-    [result_state, traverse_log, choices, vals] = minimax_decision(state, player, int(cut_off_depth))
-elif int(task) == 3:
-    [result_state, traverse_log, choices, vals] = minimax_decision(state, player, int(cut_off_depth))
-
-##
-##import sys
-##sys.stdout = sys.__stdout__()
-
-print result_state
-print traverse_log
-
-#import pdb; pdb.set_trace()
-
-### test
-##print "--END--", '\n','\n'
-##print 'line num 83 test fn'
-##acts = get_actions (s4, 'X')
-
-##d = {}
-##for a in acts:
-##    newstate = result(s4, 'X', a)
-##    u = utility(newstate, 'X')
-##    d[a] = u
-##    #print utility(result(s4, 'X', a), 'X')
-##    #print '\n -- action -- end -- '
-
 def pa(act):
     # Remeber: Format of action = (i, j)
     # (i, j) = (1,2) , (3, 4) etc
@@ -77,6 +44,26 @@ def pra(s,p):
         ps(ns)
         raw_input()
 
+def alpha_beta(state, player):
+    pass
+
+[task, player, cut_off_depth, state] = read_input()
+
+if int(task) == 2:
+    [result_state, traverse_log,
+     choices, vals] = minimax_decision(state, player, int(cut_off_depth))
+elif int(task) == 3:
+    [result_state, traverse_log,
+     choices, vals] = minimax_decision(state, player, int(cut_off_depth))
+
+
+# ADI -- Change code to output
+# to file
+print ps(result_state)
+print traverse_log
+
+
+
 print 'started.... try \n', 'minimax_decision(s, "X", 1)', '\n', 'pra(s,"X")'
 print 'try:'
 print 'minimax_decision(tst, "X", 1)'
@@ -84,5 +71,4 @@ print 'ps(tst)'
 print '\n'
 print 'run:\n', 'minimax_decision(st, "X", 2)'
 print 'run:\n', 'alpha_beta_search(st, "X", 2)'
-
-#minimax_decision(st, 'X', 2)
+print 'alpha_beta_search(state, player, int(cut_off_depth))'
