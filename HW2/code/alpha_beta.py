@@ -95,11 +95,11 @@ def terminal(state):
     else:
         return False
     
-def min_val(state, current_depth, cut_off, calling_action, alpha, beta):
+def min_val(state, current_depth, cut_off, calling_action, alpha, beta, isPassedMove):
     global MIN_PLAYER
     global value_of_node
 
-    if terminal(state):
+    if terminal(state)  and (not isPassedMove):
         value_of_node[calling_action] = utility(state, MAX_PLAYER)
         print_formatted(alpha, beta, pa(calling_action), current_depth, value_of_node[calling_action])
         return utility(state, MIN_PLAYER)    
@@ -107,10 +107,10 @@ def min_val(state, current_depth, cut_off, calling_action, alpha, beta):
     if calling_action not in value_of_node:
         value_of_node[calling_action] = float('inf')
 
-    if current_depth < cut_off:
+    if (current_depth < cut_off)  and (not isPassedMove):
         print_formatted(alpha, beta, pa(calling_action),current_depth,value_of_node[calling_action])
 
-    if cutoff(state, cut_off, current_depth):
+    if (cutoff(state, cut_off, current_depth)  and (not isPassedMove)):
         util_min = utility(result(state, MIN_PLAYER, calling_action), MIN_PLAYER)
         update_node_vals(calling_action, util_min, 'keep_max')
         print_formatted(alpha, beta, pa(calling_action),current_depth,value_of_node[calling_action])
@@ -120,10 +120,18 @@ def min_val(state, current_depth, cut_off, calling_action, alpha, beta):
 
     # TODO: Insert code for
     # pass moves
+    if len(actions) == 0:
+        # Pass to next opp player and continue
+        # print_formatted('pass', current_depth, value_of_node[calling_action])
+        print_formatted(alpha, beta, 'pass', current_depth+1, -1 * value_of_node[calling_action])
+        pass_val = -1 * max_val(state, current_depth+1, cut_off, calling_action, alpha, beta, True)
+        value_of_node[calling_action] = min( value_of_node[calling_action],pass_val)
+        print pa(calling_action), pass_val, value_of_node[calling_action]
+        v = min(v, pass_val)
 
     for a in actions:
         new_v = max_val(result(state, MIN_PLAYER, a), current_depth+1,
-                        cut_off, a, alpha, beta)
+                        cut_off, a, alpha, beta, False)
         v = min(v, new_v)
         if v <= alpha:
             value_of_node[calling_action] = min(value_of_node[calling_action],value_of_node[a])
@@ -137,11 +145,11 @@ def min_val(state, current_depth, cut_off, calling_action, alpha, beta):
                          value_of_node[calling_action])
     return v
 
-def max_val(state, current_depth, cut_off, calling_action, alpha, beta):
+def max_val(state, current_depth, cut_off, calling_action, alpha, beta, isPassedMove):
     global MAX_PLAYER
     global value_of_node
 
-    if terminal(state):
+    if terminal(state) and (not isPassedMove):
         value_of_node[calling_node] = utility(state, MIN_PLAYER)
         print_formatted(alpha, beta, pa(calling_action), current_depth, value_of_node[calling_action])
         return utility(state, MAX_PLAYER)
@@ -149,9 +157,9 @@ def max_val(state, current_depth, cut_off, calling_action, alpha, beta):
     if calling_action != 'root' and calling_action not in value_of_node:
         value_of_node[calling_action] = -float('inf')
 
-    if (current_depth < cut_off):
+    if (current_depth < cut_off) and (not isPassedMove):
         print_formatted(alpha, beta, pa(calling_action),current_depth,value_of_node[calling_action])
-    if (cutoff(state, cut_off, current_depth)):
+    if (cutoff(state, cut_off, current_depth) and (not isPassedMove)):
         util_max = utility(result(state, MAX_PLAYER, calling_action), MAX_PLAYER) 
         update_node_vals(calling_action, util_max, 'keep_min')        
         print_formatted( alpha, beta,pa(calling_action),current_depth,value_of_node[calling_action])
@@ -159,9 +167,19 @@ def max_val(state, current_depth, cut_off, calling_action, alpha, beta):
 
     v = -float('inf')
     actions = get_actions(state, MAX_PLAYER)
+
+    if len(actions) == 0:
+        # Pass to next opp player and continue
+        # print_formatted('pass', current_depth, value_of_node[calling_action])
+        print_formatted(alpha, beta, 'pass', current_depth+1, -1 * value_of_node[calling_action])
+        pass_val = -1 * min_val(state, current_depth+1, cut_off, calling_action, alpha, beta, True)
+        value_of_node[calling_action] = max( value_of_node[calling_action], pass_val)
+        #print pa(calling_action), pass_val, value_of_node[calling_action]
+        v = max(v, pass_val)
+
     for a in actions:
         new_v = min_val(result(state, MAX_PLAYER, a), current_depth+1,
-                        cut_off, a, alpha, beta)
+                        cut_off, a, alpha, beta, False)
         v = max(v, new_v)
         if v >= beta:
             value_of_node[calling_action] = max(value_of_node[calling_action],
@@ -191,7 +209,7 @@ def alpha_beta_search(state, player, cut_off):
     MAX_PLAYER = player
     MIN_PLAYER = get_opp(player)
 
-    v = max_val(state, current_depth, cut_off, calling_action, ninf, pinf)
+    v = max_val(state, current_depth, cut_off, calling_action, ninf, pinf, False)
     actions = get_actions(state, MAX_PLAYER)
     tmp = {a:utility(result(state, MAX_PLAYER, a),
                      MAX_PLAYER) for a in actions }

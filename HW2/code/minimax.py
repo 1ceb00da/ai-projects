@@ -67,7 +67,7 @@ def print_formatted(node, depth, value):
 
     #print str(node) + ',' + str(depth) + ',' + str(value)
     log.append(str(node) + ',' + str(depth) + ',' + str(value))
-
+    return str(node) + ',' + str(depth) + ',' + str(value)
 
 def update_node_vals(node, val, which):
     val1 = val
@@ -95,19 +95,23 @@ def max_val(state, current_depth, cut_off_depth, calling_action, isPassedMove):
     global value_of_node
 
     if isPassedMove:
-        print_formatted('pass', current_depth, value_of_node[calling_action])
+        pass#print_formatted('pass', current_depth, -1 * value_of_node[calling_action])
     
-    if terminal(state):
+    if terminal(state) and (not isPassedMove):
         value_of_node[calling_action] = utility(state, MIN_PLAYER)
         print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
         return utility(state, MAX_PLAYER)
     
     if calling_action not in value_of_node:
         value_of_node[calling_action] = -float('inf')
-    if (current_depth < cut_off_depth):
+
+    if (current_depth < cut_off_depth and (not isPassedMove)):
         print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
 
-    if cutoff(state, cut_off_depth, current_depth):
+    if (
+        (cutoff(state, cut_off_depth, current_depth)
+         or terminal(state))
+        and (not isPassedMove)):
         util_max = utility(result(state, MAX_PLAYER, calling_action), MAX_PLAYER) 
         update_node_vals(calling_action, util_max, 'keep_min')
         print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
@@ -120,7 +124,11 @@ def max_val(state, current_depth, cut_off_depth, calling_action, isPassedMove):
     if len(actions) == 0:
         # Pass to next opp player and continue
         # print_formatted('pass', current_depth, value_of_node[calling_action])
-        max_val(state, current_depth+1, cut_off_depth, calling_action, True)
+        print_formatted('pass', current_depth+1, -1 * value_of_node[calling_action])
+        pass_val = -1 * min_val(state, current_depth+1, cut_off_depth, calling_action, True)
+        value_of_node[calling_action] = max( value_of_node[calling_action], pass_val)
+        #print pa(calling_action), pass_val, value_of_node[calling_action]
+        v = max(v, pass_val)
 
 
     for a in actions:
@@ -135,9 +143,9 @@ def min_val(state, current_depth, cut_off_depth, calling_action, isPassedMove):
     global value_of_node
 
     if isPassedMove:
-        print_formatted('pass', current_depth, value_of_node[calling_action])
+        pass#print_formatted('pass', current_depth, -1 * value_of_node[calling_action])
     
-    if terminal(state):
+    if terminal(state) and (not isPassedMove):
         value_of_node[calling_action] = utility(state, MAX_PLAYER)
         print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
         return utility(state, MIN_PLAYER)
@@ -145,10 +153,10 @@ def min_val(state, current_depth, cut_off_depth, calling_action, isPassedMove):
     if calling_action not in value_of_node:
         value_of_node[calling_action] = float('inf')
 
-    if current_depth < cut_off_depth:
+    if current_depth < cut_off_depth and (not isPassedMove):
         print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
     
-    if cutoff(state, cut_off_depth, current_depth) or terminal(state):
+    if ((cutoff(state, cut_off_depth, current_depth) or terminal(state)) and (not isPassedMove)):
         util_min = utility(result(state, MIN_PLAYER, calling_action), MIN_PLAYER)
         update_node_vals(calling_action, util_min, 'keep_max')
         print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
@@ -160,7 +168,11 @@ def min_val(state, current_depth, cut_off_depth, calling_action, isPassedMove):
     if len(actions) == 0:
         # Pass to next opp player and continue
         # print_formatted('pass', current_depth, value_of_node[calling_action])
-        min_val(state, current_depth+1, cut_off_depth, calling_action, True)
+        print_formatted('pass', current_depth+1, -1 * value_of_node[calling_action])
+        pass_val = -1 * max_val(state, current_depth+1, cut_off_depth, calling_action, True)
+        value_of_node[calling_action] = min( value_of_node[calling_action],pass_val)
+        print pa(calling_action), pass_val, value_of_node[calling_action]
+        v= min(v, pass_val)
 
     for a in actions:
         new_val = max_val(result(state, MIN_PLAYER, a), current_depth+1, cut_off_depth, a, False)
@@ -220,6 +232,9 @@ def minimax_decision(state, player, cut_off_depth):
     choices = [child for child in actions if
                value_of_node[child] == rootval]
     choices.sort()
+
+    #import pdb; pdb.set_trace()
+    
     result_state = result(state, player, choices[0])
 
     result_pack = [make_copy(result_state), log[:], choices[:],
