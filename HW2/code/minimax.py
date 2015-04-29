@@ -65,7 +65,7 @@ def print_formatted(node, depth, value):
     elif value == -float('inf'):
         value = '-Infinity'
 
-    print str(node) + ',' + str(depth) + ',' + str(value)
+    #print str(node) + ',' + str(depth) + ',' + str(value)
     log.append(str(node) + ',' + str(depth) + ',' + str(value))
 
 
@@ -90,10 +90,13 @@ def terminal(state):
     else:
         return False
    
-def max_val(state, current_depth, cut_off_depth, calling_action):
+def max_val(state, current_depth, cut_off_depth, calling_action, isPassedMove):
     global MAX_PLAYER
     global value_of_node
 
+    if isPassedMove:
+        print_formatted('pass', current_depth, value_of_node[calling_action])
+    
     if terminal(state):
         value_of_node[calling_action] = utility(state, MIN_PLAYER)
         print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
@@ -112,20 +115,28 @@ def max_val(state, current_depth, cut_off_depth, calling_action):
     v = -float('inf')
     actions = get_actions(state, MAX_PLAYER)
 
-    # Insert code for
+    # TODO: Insert code for
     # pass moves
-    
+    if len(actions) == 0:
+        # Pass to next opp player and continue
+        # print_formatted('pass', current_depth, value_of_node[calling_action])
+        max_val(state, current_depth+1, cut_off_depth, calling_action, True)
+
+
     for a in actions:
-        new_val = min_val(result(state, MAX_PLAYER, a), current_depth+1, cut_off_depth, a)
+        new_val = min_val(result(state, MAX_PLAYER, a), current_depth+1, cut_off_depth, a, False)
         value_of_node[calling_action] = max(value_of_node[calling_action],value_of_node[a])
         print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
         v = max(v, new_val)
     return v
 
-def min_val(state, current_depth, cut_off_depth, calling_action):
+def min_val(state, current_depth, cut_off_depth, calling_action, isPassedMove):
     global MIN_PLAYER
     global value_of_node
 
+    if isPassedMove:
+        print_formatted('pass', current_depth, value_of_node[calling_action])
+    
     if terminal(state):
         value_of_node[calling_action] = utility(state, MAX_PLAYER)
         print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
@@ -145,10 +156,18 @@ def min_val(state, current_depth, cut_off_depth, calling_action):
     
     v = float('inf')
     actions = get_actions(state, MIN_PLAYER)
+
+    if len(actions) == 0:
+        # Pass to next opp player and continue
+        # print_formatted('pass', current_depth, value_of_node[calling_action])
+        min_val(state, current_depth+1, cut_off_depth, calling_action, True)
+
     for a in actions:
-        new_val = max_val(result(state, MIN_PLAYER, a), current_depth+1, cut_off_depth, a)
-        value_of_node[calling_action] = min(value_of_node[calling_action],value_of_node[a])
-        print_formatted( pa(calling_action),current_depth,value_of_node[calling_action])
+        new_val = max_val(result(state, MIN_PLAYER, a), current_depth+1, cut_off_depth, a, False)
+        value_of_node[calling_action] = min(value_of_node[calling_action],
+                                            value_of_node[a])
+        print_formatted( pa(calling_action),
+                         current_depth,value_of_node[calling_action])
         v = min(v, new_val)
     return v
 
@@ -166,9 +185,9 @@ def minimax_decision(state, player, cut_off_depth):
 
     log = []
     log.append( 'Node,Depth,Value')
-    log.append( 'Root,0,-Infinity')
-    print 'Node,Depth,Value'
-    print 'Root,0,-Infinity'
+    log.append( 'root,0,-Infinity')
+    #print 'Node,Depth,Value'
+    #print 'Root,0,-Infinity'
     
     value_of_node = {'root':-float('inf')}
 
@@ -188,10 +207,14 @@ def minimax_decision(state, player, cut_off_depth):
     tmp = {}
     start_depth = 1    
     for a in actions:
-        tmp[a] = min_val(result(state, MAX_PLAYER, a), start_depth, cut_off_depth, a)
+        tmp[a] = min_val(result(state, MAX_PLAYER, a), start_depth, cut_off_depth, a, False)
         value_of_node['root'] = max(value_of_node['root'],value_of_node[a])
-        print 'root,0,' + str(value_of_node['root'])
-        log.append('root,0,' + str(value_of_node['root']))
+        root_value = str(value_of_node['root'])
+        if value_of_node['root'] == -float('inf'):
+            root_value = '-Infinity'
+        elif value_of_node['root'] == float('inf'):
+            root_value = 'Infinity'
+        log.append('root,0,' + root_value)
         
     rootval = value_of_node['root']
     choices = [child for child in actions if
@@ -199,7 +222,10 @@ def minimax_decision(state, player, cut_off_depth):
     choices.sort()
     result_state = result(state, player, choices[0])
 
-    result_pack = [make_copy(result_state), log[:], choices[:], dict(value_of_node)]
+    result_pack = [make_copy(result_state), log[:], choices[:],
+                   dict(value_of_node)]
+
+    result_pack = [make_copy(result_state), log[:]]
     return result_pack
 
 def greedy(state, player):
