@@ -203,14 +203,22 @@ def min_val(state, current_depth, cut_off, calling_action, alpha, beta):
         value_of_node[calling_action] = float('inf')
 
     if current_depth < cut_off:
+
+        #print '-',
+
         print_formatted(alpha, beta, pa(calling_action),current_depth,value_of_node[calling_action])
     
 
     if cutoff(state, cut_off, current_depth):
         util_min = utility(result(state, MIN_PLAYER, calling_action), MIN_PLAYER)
         update_node_vals(calling_action, util_min, 'keep_max')
+
+
+        #print '--',
+
+
         print_formatted(alpha, beta, pa(calling_action),current_depth,value_of_node[calling_action])
-        return utility(state, MAX_PLAYER)
+        return utility(state, MIN_PLAYER)
 
     v = float('inf')
     actions = get_actions(state, MIN_PLAYER)
@@ -221,10 +229,27 @@ def min_val(state, current_depth, cut_off, calling_action, alpha, beta):
 
         if v <= alpha:
             value_of_node[calling_action] = min(value_of_node[calling_action],value_of_node[a])
+
+            #FIXME: beta val not updated
+            # Fix:
+            beta = min(beta, v)
+            
+            if pa(calling_action) == 'c4':
+               pass #import pdb; pdb.set_trace()
+            #print '---',
+
+
             print_formatted( alpha, beta,pa(calling_action),current_depth,value_of_node[calling_action])
             return v
+
         beta = min(beta, value_of_node[a])
         value_of_node[calling_action] = min(value_of_node[calling_action],value_of_node[a])
+
+        #print '----',
+
+        if (pa(calling_action) == 'c4'):
+            pass#import pdb; pdb.set_trace()
+
         print_formatted( alpha, beta,
                          pa(calling_action),current_depth,
                          value_of_node[calling_action])
@@ -238,14 +263,23 @@ def max_val(state, current_depth, cut_off, calling_action, alpha, beta):
     if calling_action != 'root' and calling_action not in value_of_node:
         value_of_node[calling_action] = -float('inf')
     if (current_depth < cut_off):
+
+
+        #print '#',
+
+
         print_formatted(alpha, beta, pa(calling_action),current_depth,value_of_node[calling_action])
 
     
     if (cutoff(state, cut_off, current_depth)):
         util_max = utility(result(state, MAX_PLAYER, calling_action), MAX_PLAYER) 
         update_node_vals(calling_action, util_max, 'keep_min')
+
+        #print '##',
+        
         print_formatted( alpha, beta,pa(calling_action),current_depth,value_of_node[calling_action])
-        return utility(state, MIN_PLAYER)
+
+        return utility(state, MAX_PLAYER)
 
     v = -float('inf')
     actions = get_actions(state, MAX_PLAYER)
@@ -257,12 +291,24 @@ def max_val(state, current_depth, cut_off, calling_action, alpha, beta):
         if v >= beta:
             value_of_node[calling_action] = max(value_of_node[calling_action],
                                                 value_of_node[a])
+
+            alpha = max(alpha, v)
+            
+            print '###',
+
             print_formatted( alpha, beta, pa(calling_action),current_depth,value_of_node[calling_action])
+
+
             return v
         #print 'alpha =max(alpha,v) = ', alpha, '=','max(',alpha,',',value_of_node[a],')'
         alpha = max(alpha, value_of_node[a])
         value_of_node[calling_action] = max(value_of_node[calling_action],value_of_node[a])
+
+
+        #print '####',
+
         print_formatted( alpha, beta, pa(calling_action),current_depth,value_of_node[calling_action])
+
         #print '^^^^^^ from max_val'
     return v
         
