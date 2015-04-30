@@ -150,8 +150,8 @@ def max_val(state, current_depth, cut_off, calling_action, alpha, beta, isPassed
     global value_of_node
 
     if terminal(state) and (not isPassedMove):
-        value_of_node[calling_node] = utility(state, MIN_PLAYER)
-        print_formatted(alpha, beta, pa(calling_action), current_depth, value_of_node[calling_action])
+        value_of_node[calling_action] = utility(state, MIN_PLAYER)
+        print_formatted(alpha, beta, pa(calling_action), current_depth, -1*value_of_node[calling_action])
         return utility(state, MAX_PLAYER)
     
     if calling_action != 'root' and calling_action not in value_of_node:
@@ -218,6 +218,8 @@ def alpha_beta_search(state, player, cut_off):
     choices = [child for child in actions if
                value_of_node[child] == rootval]
     choices.sort()
+    if not choices:
+        return [make_copy(state), log[:]]
     result_state = result(state, player, choices[0])
 
     return [make_copy(result_state), log[:]]

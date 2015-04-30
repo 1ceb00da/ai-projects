@@ -200,6 +200,21 @@ def minimax_decision(state, player, cut_off_depth):
     log.append( 'root,0,-Infinity')
     #print 'Node,Depth,Value'
     #print 'Root,0,-Infinity'
+    # If no actions return
+    # pass
+    value_of_node = {'root':-float('inf')}
+
+    MAX_PLAYER = player
+    MIN_PLAYER = get_opp(player)
+    
+    actions = get_actions(state, MAX_PLAYER)
+    
+    if terminal(state) or len(actions) == 0:
+        util_val = utility(state, player)
+        t_log = ['root,0,' + str(util_val)]
+        result_pack = [state, t_log]
+        return result_pack
+
     
     value_of_node = {'root':-float('inf')}
 
@@ -207,14 +222,6 @@ def minimax_decision(state, player, cut_off_depth):
     MIN_PLAYER = get_opp(player)
     
     actions = get_actions(state, MAX_PLAYER)
-
-    # If no actions return
-    # pass
-    if len(actions) == 0:
-        util_val = utility(state, player)
-        t_log = ['root,0,' + str(util_val)]
-        result_pack = [state, t_log, None, None]
-        return result_pack
     
     tmp = {}
     start_depth = 1    
@@ -230,10 +237,8 @@ def minimax_decision(state, player, cut_off_depth):
         
     rootval = value_of_node['root']
     choices = [child for child in actions if
-               value_of_node[child] == rootval]
+               abs(value_of_node[child]) == abs(rootval)]
     choices.sort()
-
-    #import pdb; pdb.set_trace()
     
     result_state = result(state, player, choices[0])
 
