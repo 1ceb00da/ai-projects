@@ -211,9 +211,11 @@ def alpha_beta_search(state, player, cut_off):
 
     v = max_val(state, current_depth, cut_off, calling_action, ninf, pinf, False)
     actions = get_actions(state, MAX_PLAYER)
-    tmp = {a:utility(result(state, MAX_PLAYER, a),
-                     MAX_PLAYER) for a in actions }
-
+    #tmp = {a:utility(result(state, MAX_PLAYER, a),
+    #                 MAX_PLAYER) for a in actions }
+    tmp = {}
+    for a in actions:
+        tmp[a] = utility(result(state, MAX_PLAYER,a),MAX_PLAYER)
     rootval = value_of_node['root']
     choices = [child for child in actions if
                value_of_node[child] == rootval]
