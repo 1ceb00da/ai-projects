@@ -45,9 +45,9 @@ def write_output(result_state, log):
 
     
 [task, player, cut_off_depth, state] = read_input()
-print 'INPUT'
-print '\n'.join([task, player, cut_off_depth])
-print '\n'.join([''.join(e) for e in state])
+#print 'INPUT'
+#print '\n'.join([task, player, cut_off_depth])
+#print '\n'.join([''.join(e) for e in state])
 
 if int(task) == 1:
     result_state = greedy(state, player)
@@ -62,9 +62,9 @@ elif int(task) == 3:
 
 # ADI -- Change code to output
 # to file
-print 'OUTPUT'
-print '\n'.join([''.join(e) for e in result_state])
-print '\n'.join(traverse_log)
+#print 'OUTPUT'
+#print '\n'.join([''.join(e) for e in result_state])
+#print '\n'.join(traverse_log)
 
 write_output(result_state, traverse_log)
 
